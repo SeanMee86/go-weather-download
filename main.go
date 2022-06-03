@@ -1,42 +1,29 @@
 package main
 
 import (
-	"errors"
-	"io"
-	"net/http"
+	"fmt"
 	"os"
 )
 
 func main() {
-	u := "https://www.webcarpenter.com/pictures/Go-gopher-programming-language.jpg"
-	fn := "gopher.jpg"
-	downloadFile(u, fn)
+	u := "https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4353&lon=-122.0712&wfo=MTR&zcode=CAZ508&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=10000010100000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=&hrspan=48&pqpfhr=6&psnwhr=6"
+	tmpFile := "temp-weather.png"
+	d := getDate()
+	err := downloadFile(u, tmpFile)
+	if err != nil {
+		fmt.Println("Errors: ", err)
+	}
+
+	i, err := os.Open(tmpFile)
+	if err != nil {
+		fmt.Println("Errors: ", err)
+	}
+
+	generatePdf(d)
+	i.Close()
+	err = os.Remove(tmpFile)
+
+	if err != nil {
+		fmt.Println("Errors: ", err)
+	}
 }
-
-func downloadFile(url string, filename string) error {
-	resp, err := http.Get(url)
-
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return errors.New("received non-200 status code")
-	}
-
-	f, err := os.Create(filename)
-
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = io.Copy(f, resp.Body)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-} 
