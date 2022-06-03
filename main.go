@@ -19,7 +19,7 @@ func main() {
 		fmt.Println("Errors: ", err)
 	}
 
-	generatePdf(d)
+	generatePdf(i, d)
 	i.Close()
 	err = os.Remove(tmpFile)
 
