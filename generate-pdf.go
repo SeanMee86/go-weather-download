@@ -7,7 +7,7 @@ import (
 	"github.com/jung-kurt/gofpdf"
 )
 
-func generatePdf(graph *os.File, date string) {
+func generatePdf(graph *os.File, date string, dir string) {
 	u := "https://forecast.weather.gov/MapClick.php?w0=t&w3u=1&w5=pop&w7 =rain&w14u=1&w15u=1&AheadHour=0&Submit=Submit&FcstType=graphical& textField1=37.4353&textField2=-122.0712&site=all&unit=0&dd=&bw="
 	ua := strings.Split(u, " ")
 	fu := strings.Join(ua, "")
@@ -19,7 +19,8 @@ func generatePdf(graph *os.File, date string) {
 	pdf.SetFont("Arial", "", 16)
 	opt.ImageType = "png"
 	// Add Header
-	pdf.ImageOptions("header_img.png", 25, 10, 0, 0, false, opt, 0, "")
+	headerDir := dir+"\\header_img.png"
+	pdf.ImageOptions(headerDir, 25, 10, 0, 0, false, opt, 0, "")
 	pdf.Ln(25)
 	// Add Title
 	printPdfLn(pdf, "Weather Forecast Information")
@@ -35,10 +36,10 @@ func generatePdf(graph *os.File, date string) {
 	pdf.Ln(5)
 	// Add Graph
 	pdf.SetFont("Arial", "", 10)
-	pdf.CellFormat(0, 5, "Lorem Ipsum", "", 1, gofpdf.AlignLeft, false, 0, "")
-	pdf.CellFormat(0, 5, "Lorem Ipsum", "", 1, gofpdf.AlignLeft, false, 0, "")
+	pdf.CellFormat(0, 5, "Point Forecast: Moffett Nas/Mtn Vie CA", "", 1, gofpdf.AlignLeft, false, 0, "")
+	pdf.CellFormat(0, 5, "37.44N 122.07W (Elev. 3 ft)", "", 1, gofpdf.AlignLeft, false, 0, "")
 	pdf.ImageOptions(graph.Name(), 11, 10, 189, 0, true, opt, 0, "")
-	err := pdf.OutputFileAndClose("weather-forecast-"+date+".pdf")
+	err := pdf.OutputFileAndClose(dir+"\\weather-forecast-"+date+".pdf")
 	if err != nil {
 		fmt.Println("Errors: ", err)
 	}
