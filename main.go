@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -12,10 +13,13 @@ func main() {
 		fmt.Println("Errors: ", err)
 	}
 	wd := filepath.Dir(ex)
-	u := "https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4353&lon=-122.0712&wfo=MTR&zcode=CAZ508&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=10000010100000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=&hrspan=48&pqpfhr=6&psnwhr=6"
-	tmpFile := wd+"\\temp-weather.png"
+	u, err := getImgUrl(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	tmpFile := wd+"/temp-weather.png"
 	d := getDate()
-	err = downloadFile(u, tmpFile)
+	err = downloadFile(baseUrl + u, tmpFile)
 	if err != nil {
 		fmt.Println("Errors: ", err)
 	}
@@ -25,7 +29,7 @@ func main() {
 		fmt.Println("Errors: ", err)
 	}
 
-	generatePdf(i, d, wd)
+	generatePdf(i, d, wd, os.Args[1])
 	i.Close()
 	err = os.Remove(tmpFile)
 
@@ -33,3 +37,5 @@ func main() {
 		fmt.Println("Errors: ", err)
 	}
 }
+
+const baseUrl = "https://forecast.weather.gov/"
