@@ -13,7 +13,7 @@ func main() {
 		fmt.Println("Errors: ", err)
 	}
 	wd := filepath.Dir(ex)
-	u, err := getImgUrl(os.Args[1])
+	u, pf, c, co, err := getImgUrl(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,7 +29,7 @@ func main() {
 		fmt.Println("Errors: ", err)
 	}
 
-	generatePdf(i, d, wd, os.Args[1])
+	generatePdf(i, d, pf, c, co, wd, os.Args[1])
 	i.Close()
 	err = os.Remove(tmpFile)
 

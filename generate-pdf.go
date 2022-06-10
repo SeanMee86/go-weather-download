@@ -7,7 +7,8 @@ import (
 	"github.com/jung-kurt/gofpdf"
 )
 
-func generatePdf(graph *os.File, date string, dir string, url string) {
+func generatePdf(graph *os.File, date string, pointForecast string, city string, coords string, dir string, url string) {
+	fmt.Println(pointForecast)
 	fd := formatDate(date)
 	var opt gofpdf.ImageOptions
 	pdf := gofpdf.New("P", "mm", "A4", "")
@@ -35,8 +36,8 @@ func generatePdf(graph *os.File, date string, dir string, url string) {
 	pdf.Ln(5)
 	// Add Graph
 	pdf.SetFont("Arial", "", 10)
-	pdf.CellFormat(0, 5, "Point Forecast: Moffett Nas/Mtn Vie CA", "", 1, gofpdf.AlignLeft, false, 0, "")
-	pdf.CellFormat(0, 5, "37.44N 122.07W (Elev. 3 ft)", "", 1, gofpdf.AlignLeft, false, 0, "")
+	pdf.CellFormat(0, 5, pointForecast + city, "", 1, gofpdf.AlignLeft, false, 0, "")
+	pdf.CellFormat(0, 5, coords, "", 1, gofpdf.AlignLeft, false, 0, "")
 	pdf.ImageOptions(graph.Name(), 11, 10, 189, 0, true, opt, 0, "")
 	err := pdf.OutputFileAndClose(dir+"/weather-forecast-"+date+".pdf")
 	if err != nil {
