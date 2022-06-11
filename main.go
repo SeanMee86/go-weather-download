@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -9,33 +8,27 @@ import (
 
 func main() {
 	ex, err := os.Executable()
+
 	if err != nil {
-		fmt.Println("Errors: ", err)
+		log.Fatal("Errors: ", err)
 	}
-	wd := filepath.Dir(ex)
-	u, pf, c, co, err := getImgUrl(os.Args[1])
-	if err != nil {
-		log.Fatal(err)
-	}
-	tmpFile := wd+"/temp-weather.png"
+
+	dir := filepath.Dir(ex)
+	tmpFile := dir+"\\temp-weather.png"
 	d := getDate()
-	err = downloadFile(baseUrl + u, tmpFile)
-	if err != nil {
-		fmt.Println("Errors: ", err)
-	}
+	pd := getPdfData(os.Args[1])
+	absImgUrl := baseUrl + pd.imageUrl
+	downloadFile(absImgUrl, tmpFile)
 
-	i, err := os.Open(tmpFile)
-	if err != nil {
-		fmt.Println("Errors: ", err)
-	}
-
-	generatePdf(i, d, pf, c, co, wd, os.Args[1])
-	i.Close()
-	err = os.Remove(tmpFile)
+	f, err := os.Open(tmpFile)
 
 	if err != nil {
-		fmt.Println("Errors: ", err)
+		log.Fatal("Errors: ", err)
 	}
+
+	generatePdf(f, d, pd, dir)
+	f.Close()
+	os.Remove(tmpFile)
 }
 
 const baseUrl = "https://forecast.weather.gov/"
