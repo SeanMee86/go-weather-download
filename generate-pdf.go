@@ -11,6 +11,7 @@ func generatePdf(graph *os.File, date string, pd PdfData, dir string) {
 	fd := formatDate(date)
 	var opt gofpdf.ImageOptions
 	pdf := gofpdf.New("P", "mm", "A4", "")
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
 	pdf.AddPage()
 	pdf.SetAutoPageBreak(true, 10)
 	pdf.SetFont("Arial", "", 16)
@@ -35,8 +36,8 @@ func generatePdf(graph *os.File, date string, pd PdfData, dir string) {
 	pdf.Ln(5)
 	// Add Graph
 	pdf.SetFont("Arial", "", 10)
-	pdf.CellFormat(0, 5, pd.pointForecast + pd.city, "", 1, gofpdf.AlignLeft, false, 0, "")
-	pdf.CellFormat(0, 5, pd.coords, "", 1, gofpdf.AlignLeft, false, 0, "")
+	pdf.CellFormat(0, 5, tr(pd.pointForecast + pd.city), "", 1, gofpdf.AlignLeft, false, 0, "")
+	pdf.CellFormat(0, 5, tr(pd.coords), "", 1, gofpdf.AlignLeft, false, 0, "")
 	pdf.ImageOptions(graph.Name(), 11, 10, 189, 0, true, opt, 0, "")
 	err := pdf.OutputFileAndClose(dir+"\\weather-forecast-"+date+".pdf")
 	if err != nil {
