@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"github.com/SeanMee86/go-weather-download/helpers"
 )
 
 func main() {
@@ -15,10 +16,10 @@ func main() {
 
 	dir := filepath.Dir(ex)
 	tmpFile := dir+"\\temp-weather.png"
-	d := getDate()
-	pd := getPdfData(os.Args[1])
-	absImgUrl := baseUrl + pd.imageUrl
-	downloadFile(absImgUrl, tmpFile)
+	d := helpers.GetDate()
+	pd := helpers.GetPdfData(os.Args[1])
+	absImgUrl := baseUrl + pd.ImageUrl
+	helpers.DownloadFile(absImgUrl, tmpFile)
 
 	f, err := os.Open(tmpFile)
 
@@ -26,7 +27,7 @@ func main() {
 		log.Fatal("Errors: ", err)
 	}
 
-	generatePdf(f, d, pd, dir)
+	helpers.GeneratePdf(f, d, pd, dir)
 	f.Close()
 	os.Remove(tmpFile)
 }
