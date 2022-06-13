@@ -16,7 +16,7 @@ func main() {
 
 	dir := filepath.Dir(ex)
 	tmpFile := dir+"\\temp-weather.png"
-	d := helpers.GetDate()
+	d := helpers.FormatDateForFilename()
 	pd := helpers.GetPdfData(os.Args[1])
 	absImgUrl := baseUrl + pd.ImageUrl
 	helpers.DownloadFile(absImgUrl, tmpFile)

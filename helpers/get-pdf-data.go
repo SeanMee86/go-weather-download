@@ -23,6 +23,11 @@ func GetPdfData(siteUrl string) PdfData {
 		log.Fatal("Errors: ", err)
 	}
 	defer resp.Body.Close()
+	buildPdfData(&pdfData, resp)
+	return pdfData
+}
+
+func buildPdfData(pdfData *PdfData, resp *http.Response) {
 	htmlTokens := html.NewTokenizer(resp.Body)
 	counter := 0
 	startCounter := false
@@ -33,28 +38,35 @@ func GetPdfData(siteUrl string) PdfData {
 			break loop
 		case html.TextToken:
 			tknData := htmlTokens.Token().Data
-			if strings.Contains(tknData, "Point Forecast:") {
-				pdfData.pointForecast = tknData
-				startCounter = true
-			}
-			if startCounter {
-				switch counter {
-				case 1:
-					pdfData.city =  tknData
-				case 2:
-					pdfData.coords = tknData
-					startCounter = false
-				}
-				counter++
-			}
+			addTextToPdfData(pdfData, &startCounter, tknData, &counter)
 		case html.StartTagToken:
-			t := htmlTokens.Token()
-			if t.Data == "img" {
-				if t.Attr[len(t.Attr)-1].Val == "#MouseVal" {
-					pdfData.ImageUrl = t.Attr[0].Val
-				}
-			}
+			addImageToPdfData(pdfData, htmlTokens)
 		}
 	}
-	return pdfData
+}
+
+func addTextToPdfData(pdfData *PdfData, startCounter *bool, text string, c *int ) {
+	if strings.Contains(text, "Point Forecast:") {
+		pdfData.pointForecast = text
+		*startCounter = true
+	}
+	if *startCounter {
+		switch *c {
+		case 1:
+			pdfData.city = text
+		case 2:
+			pdfData.coords = text
+			*startCounter = false
+		}
+		*c++
+	}
+}
+
+func addImageToPdfData(pdfData *PdfData, hTkn *html.Tokenizer) {
+	t := hTkn.Token()
+	if t.Data == "img" {
+		if t.Attr[len(t.Attr)-1].Val == "#MouseVal" {
+			pdfData.ImageUrl = t.Attr[0].Val
+		}
+	}
 }
