@@ -37,8 +37,7 @@ func buildPdfData(pdfData *PdfData, resp *http.Response) {
 		case html.ErrorToken:
 			break loop
 		case html.TextToken:
-			tknData := htmlTokens.Token().Data
-			addTextToPdfData(pdfData, &startCounter, tknData, &counter)
+			addTextToPdfData(pdfData, &startCounter, htmlTokens.Token().Data, &counter)
 		case html.StartTagToken:
 			addImageToPdfData(pdfData, htmlTokens)
 		}
